@@ -2,4 +2,4 @@
 First Working on financial bot
 
 
-Adding sqlite3
+Add sqlite3
