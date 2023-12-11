@@ -2,4 +2,4 @@
 First Working on financial bot
 
 
-Add sqlite3,
+Add sqlite3 and venv, i think
