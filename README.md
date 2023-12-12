@@ -3,4 +3,4 @@ First Working on financial bot
 
 
 Add sqlite3 and venv, i think
-don't know
+don't know how to make it useful
