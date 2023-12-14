@@ -5,6 +5,28 @@ import sqlite3
 
 bot = telebot.TeleBot(token)
 
+
+@bot.message_handler(commands=['help'])
+def help(message):
+    # открытие соединения с базой данных
+    connection = sqlite3.connect('Viral.sql')
+    cursor = connection.cursor()
+
+    # Подготовка sql команды
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (id int auto_increment primary key, name varchar(50), pass varchar(50))')
+    # Синхранизация этой команды
+    connection.commit()
+    # Закрываем соединение с базой данных
+    cursor.close()
+    connection.close()
+
+    bot.send_message(message.chat.id, 'Привет, сейчас тебя зарегестрирую! Введите своё имя')
+    bot.register_next_step_handler_by_chat_id(message, user_name)
+
+
+def user_name(message):
+    pass
+
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup()
@@ -13,15 +35,17 @@ def start(message):
     btn2 = types.KeyboardButton('Удалить фото')
     btn3 = types.KeyboardButton('Изменить текст')
     markup.row(btn2, btn3)
-    bot.send_message(message.chat.id, "Привет", reply_markup=markup)
+    bot.send_message(message.chat.id, "Привет, Выдай фото на Инлайны", reply_markup=markup)
     bot.register_next_step_handler(message, on_click)
 
 
 def on_click(message):
     if message.text == "Перейти на сайт":
         bot.send_message(message.chat.id, 'website is open')
-    elif message.text == "удалить фото":
+    elif message.text == "Удалить фото":
         bot.send_message(message.chat.id, 'delete')
+    elif message.text == "Изменить текст":
+        bot.send_message(message.chat.id, 'edit')
 
 
 @bot.message_handler(content_types=['photo'])
