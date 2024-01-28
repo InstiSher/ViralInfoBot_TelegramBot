@@ -2,10 +2,12 @@ import telebot
 from config import token
 from telebot import types
 import sqlite3
+import requests
+import json
 
 bot = telebot.TeleBot(token)
 name = None
-
+API = "da204a9bac6691cbd4a21dfd41997f0c"
 
 @bot.message_handler(commands=['help'])
 def help(message):
@@ -57,9 +59,7 @@ def start(message):
     btn2 = types.KeyboardButton('Удалить фото')
     btn3 = types.KeyboardButton('Изменить текст')
     markup.row(btn2, btn3)
-    bot.send_message(message.chat.id, "Привет, Отправь фото на Инлайнов\n "
-                                      "Для Создания таблицы введите команду /help\n "
-                                      "Чтобы получить погоду введите /weather", reply_markup=markup)
+    bot.send_message(message.chat.id, "Привет! Я умею делать пару вещей, потыкай кнопки)", reply_markup=markup)
     bot.register_next_step_handler(message, on_click)
 
 
@@ -77,7 +77,9 @@ def on_click(message):
     elif message.text == "Изменить текст":
         bot.send_message(message.chat.id, 'edit', reply_markup=markup)
     else:
-        bot.send_message(message.chat.id, 'Выбери команду для продолжение', reply_markup=markup)
+        bot.send_message(message.chat.id, "Привет, Отправь фото на Инлайнов\n "
+                                          "Для Создания таблицы введите команду /help\n "
+                                          "Чтобы получить погоду введите /weather", reply_markup=markup)
 
 
 @bot.message_handler(content_types=['photo'])
@@ -93,8 +95,22 @@ def photo(message):
 
 @bot.message_handler(commands=['weather'])
 def weather(message):
-    pass
+    bot.send_message(message.chat.id, 'Привет, рад теб видеть! Напиши название города')
+    bot.register_next_step_handler(message, get_weather)
 
+def get_weather(message):
+    city = message.text.strip().lower() #Удаляет пробелы до и после самой строки и lower() привести к нижнему регистру
+    try:
+        res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}&units=metric')
+        data = json.loads(res.text)   # метод loads не load
+        temp = data["main"]["temp"]
+        bot.reply_to(message, f'Сейчас погода: {temp} По Цельсию')
+
+        image = 'sunny.png' if temp > 5.0 else 'sun.png'
+        file = open('./'+image, 'rb')
+        bot.send_photo(message.chat.id, file)
+    except:
+        bot.send_message(message.chat.id, f'Произошла ошибка, повторите позже')
 
 #Спец декоратор для кол бек дата
 @bot.callback_query_handler(func=lambda callback: True)
