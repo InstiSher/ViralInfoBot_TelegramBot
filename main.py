@@ -4,6 +4,7 @@ from telebot import types
 import sqlite3
 import requests
 import json
+from currency_converter import CurrencyConverter
 
 bot = telebot.TeleBot(token)
 name = None
@@ -54,13 +55,30 @@ def user_pass(message):
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup()
-    btn1 = types.KeyboardButton('Перейти на сайт')
+    btn1 = types.KeyboardButton('Перейти к старой версии')
     markup.row(btn1)
-    btn2 = types.KeyboardButton('Удалить фото')
-    btn3 = types.KeyboardButton('Изменить текст')
+    btn2 = types.KeyboardButton('Бот Погоды')
+    btn3 = types.KeyboardButton('Бот Конвертации Валют')
     markup.row(btn2, btn3)
-    bot.send_message(message.chat.id, "Привет! Я умею делать пару вещей, потыкай кнопки)", reply_markup=markup)
-    bot.register_next_step_handler(message, on_click)
+    bot.send_message(message.chat.id, "Привет! Я умею делать много всяких вещей, потыкай кнопки)", reply_markup=markup)
+    bot.register_next_step_handler(message, past_start)
+
+
+def past_start(message):
+    if message.text == "Бот Погоды":
+        weather(message)
+    elif message.text == "Бот Конвертации Валют":
+        pass
+        #Money(message)
+    elif message.text == "Перейти к старой версии":
+        markup = types.ReplyKeyboardMarkup()
+        btn1 = types.KeyboardButton('Перейти на сайт')
+        markup.row(btn1)
+        btn2 = types.KeyboardButton('Удалить фото')
+        btn3 = types.KeyboardButton('Изменить текст')
+        markup.row(btn2, btn3)
+        bot.send_message(message.chat.id, "Привет! Я умею делать пару вещей, потыкай кнопки)", reply_markup=markup)
+        bot.register_next_step_handler(message, on_click)
 
 
 def on_click(message):
@@ -92,6 +110,7 @@ def photo(message):
     markup.row(btn2, btn3)
     bot.reply_to(message, "Крутая фотография", reply_markup=markup)
 
+''' Функционал нового бота '''
 
 @bot.message_handler(commands=['weather'])
 def weather(message):
@@ -111,6 +130,13 @@ def get_weather(message):
         bot.send_photo(message.chat.id, file)
     except:
         bot.send_message(message.chat.id, f'Произошла ошибка, повторите позже')
+
+
+def Money(message):
+    pass
+
+
+'''Конец функционала'''
 
 #Спец декоратор для кол бек дата
 @bot.callback_query_handler(func=lambda callback: True)
