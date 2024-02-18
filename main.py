@@ -1,10 +1,14 @@
-import telebot
+import telebot               # Отключить работу venv ctrl + c, ctrl + z
 from config import token
 from telebot import types
 import sqlite3
 import requests
 import json
-from currency_converter import CurrencyConverter
+from pycbrf.toolbox import ExchangeRates # импортируем библиотеку
+
+rates = ExchangeRates('2024-02-18') # задаем дату, за которую хотим получить данные
+result = rates['USD']
+print(result)
 
 bot = telebot.TeleBot(token)
 name = None
@@ -68,8 +72,7 @@ def past_start(message):
     if message.text == "Бот Погоды":
         weather(message)
     elif message.text == "Бот Конвертации Валют":
-        pass
-        #Money(message)
+        Money(message)
     elif message.text == "Перейти к старой версии":
         markup = types.ReplyKeyboardMarkup()
         btn1 = types.KeyboardButton('Перейти на сайт')
@@ -133,7 +136,13 @@ def get_weather(message):
 
 
 def Money(message):
-    pass
+    rates = ExchangeRates('2024-02-18')  # задаем дату, за которую хотим получить данные
+    result = rates['KRW']
+
+    if result.par == 1:
+        bot.send_message(message.chat.id, f'{result.par} Рубль равен {result.value}')
+    else:
+        bot.send_message(message.chat.id, f'{result.par} Рублей равно {result.value} {result.name}')
 
 
 '''Конец функционала'''
