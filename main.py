@@ -4,11 +4,6 @@ from telebot import types
 import sqlite3
 import requests
 import json
-from pycbrf.toolbox import ExchangeRates # импортируем библиотеку
-
-rates = ExchangeRates('2024-02-18') # задаем дату, за которую хотим получить данные
-result = rates['USD']
-print(result)
 
 bot = telebot.TeleBot(token)
 name = None
@@ -136,13 +131,7 @@ def get_weather(message):
 
 
 def Money(message):
-    rates = ExchangeRates('2024-02-18')  # задаем дату, за которую хотим получить данные
-    result = rates['KRW']
-
-    if result.par == 1:
-        bot.send_message(message.chat.id, f'{result.par} Рубль равен {result.value}')
-    else:
-        bot.send_message(message.chat.id, f'{result.par} Рублей равно {result.value} {result.name}')
+    pass
 
 
 '''Конец функционала'''
