@@ -7,4 +7,4 @@ Old version + weather bot + converter bot
 
 Converter bot updated without RUB, KRW, KTZ
 
-web_app upgrade
+web_app upgrade and it is not that simple
